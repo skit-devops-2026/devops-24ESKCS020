@@ -1,116 +1,137 @@
-# Home Automation
+# 🏠 SmartHome — Home Automation Dashboard
 
-A self-hosted home automation system with a Flask REST API backend, an MQTT-based sensor/device layer, and a web dashboard for controlling devices, managing rooms, and creating automation rules.
+A full-stack home automation system where users can manage smart devices (lights, fans, thermostats, locks) across multiple rooms, set automation rules, and monitor usage — all through a clean, simple dashboard.
 
-## Features
+Since no physical hardware is used, devices are **simulated in software**: their states change through user actions and a backend simulation engine that mimics real-world sensor behavior (e.g., temperature drift, response delay).
 
-- **User accounts** — registration and login (session-less, credential check against a MySQL database)
-- **Live sensor data** — temperature and humidity readings streamed in over MQTT and logged to the database, with a history endpoint for the last 50 readings
-- **Device control** — turn devices on/off per room, and dedicated controls for an AC unit (power, mode, fan speed, temperature)
-- **Rooms & devices management** — create, update, and delete rooms and the devices assigned to them
-- **Automation rules** — define rules that trigger device actions when a sensor condition (greater/less/equal) is met, plus support for time-based conditions via a background scheduler
-- **Favorites** — mark and manage favorite automation rules
-- **Web dashboard** — a multi-page frontend (login, main dashboard, automations, settings) built with vanilla HTML/CSS/JS
+---
 
-## Project Structure
+## ✨ Features
+
+- 🔐 **Authentication** — JWT-based login/signup with role-based access (Admin/User)
+- 🏘️ **Home → Room → Device hierarchy** — organize devices by room
+- 💡 **Device control** — toggle switches, sliders, and buttons for lights, fans, thermostats, locks, plugs
+- ⚡ **Real-time updates** — device state changes sync live across tabs/clients via WebSocket
+- 🤖 **Automation rules** — define simple "if-this-then-that" rules (e.g., *if temperature > 30°C, turn on fan*)
+- 📊 **Usage analytics** — charts showing device usage and estimated energy cost
+- 🔔 **Notifications** — alerts when automation rules trigger or devices stay on/unlocked too long
+- 🎛️ **Simulated device engine** — backend job that mimics sensor fluctuations and device response delay
+
+---
+
+## 🧱 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript, Vite, Tailwind CSS, Recharts, STOMP.js / SockJS |
+| Backend | Java Spring Boot, Spring Security (JWT), Spring WebSocket |
+| Database | PostgreSQL (or MySQL) |
+| Scheduling | Spring `@Scheduled` (device simulation + rule evaluation) |
+| Deployment | Docker Compose, Vercel/Netlify (frontend), Render/Railway (backend) |
+
+---
+
+## 🎨 Design Philosophy
+
+Kept intentionally **simple and minimal**:
+- Card-based layouts for rooms/devices — no clutter, no unnecessary nesting
+- Neutral color palette with clear on/off state indicators
+- Mobile-responsive from day one
+- Few clicks to control any device from the dashboard
+
+---
+
+## 🗂️ Project Structure
 
 ```
-HomeAutomation/
-├── app.py                  # Flask API server (routes, MQTT client, scheduler, DB logic)
-├── debug.py                 # Debug helper script
-├── diagnose.py               # Diagnostics helper script
-├── requirements.txt          # Python dependencies
-├── js auto backup.js         # JS backup/utility script
-├── login/                   # Login page (HTML/CSS/JS)
-├── main/                    # Main dashboard page (HTML/CSS/JS)
-├── automations/              # Shared automation styles (media queries)
-├── Automations/               # Automations page (HTML/CSS/JS)
-├── settings/                 # Settings page (HTML/CSS/JS)
-└── test.html                 # Standalone test page
+smart-home/
+├── frontend/               # React + TypeScript app
+│   ├── src/
+│   │   ├── components/     # Reusable UI (DeviceCard, RoomGrid, Sidebar, etc.)
+│   │   ├── pages/          # Dashboard, Rooms, Login, Rules, Analytics
+│   │   ├── context/        # Auth & global state
+│   │   ├── services/       # API + WebSocket service layer
+│   │   └── types/          # Shared TypeScript interfaces
+│   └── ...
+├── backend/                 # Spring Boot app
+│   ├── src/main/java/...
+│   │   ├── controller/      # REST controllers
+│   │   ├── service/         # Business logic + simulation engine
+│   │   ├── repository/      # Spring Data JPA repos
+│   │   ├── model/           # Entities: User, Home, Room, Device, Rule, DeviceLog
+│   │   ├── security/        # JWT + Spring Security config
+│   │   └── websocket/       # STOMP config
+│   └── ...
+├── docker-compose.yml
+└── README.md
 ```
 
-## Tech Stack
+---
 
-**Backend**
-- [Flask](https://flask.palletsprojects.com/) + Flask-CORS — REST API
-- [paho-mqtt](https://pypi.org/project/paho-mqtt/) — MQTT client for sensor/device messaging
-- [APScheduler](https://apscheduler.readthedocs.io/) — background job scheduling for time-based automation rules
-- MySQL — persistent storage (users, devices, rooms, automation rules, sensor logs, login history)
-- Gunicorn — production WSGI server
+## 🗺️ Data Model (high level)
 
-**Frontend**
-- HTML, CSS, and vanilla JavaScript (no framework)
+```
+User ──< Home ──< Room ──< Device ──< DeviceLog
+                              │
+                              └──< AutomationRule
+```
 
-## Getting Started
+- **User** — id, name, email, password (hashed), role
+- **Home** — id, name, owner (User)
+- **Room** — id, name, home (Home)
+- **Device** — id, name, type (LIGHT/FAN/THERMOSTAT/LOCK/PLUG), state (JSON: on/off, value), room (Room)
+- **DeviceLog** — id, device, previous state, new state, timestamp
+- **AutomationRule** — id, condition (e.g., `temperature > 30`), action (e.g., `turn on fan`), device, enabled
 
-### Prerequisites
+---
 
-- Python 3.8+
-- A running MySQL server
-- Access to an MQTT broker (the app connects to `broker.mqtt.cool` by default)
+## 📅 Development Plan (Frontend-First, 10 Weeks)
 
-### Installation
+| Week | Focus |
+|---|---|
+| 1 | Project setup + static UI shell (mock data) |
+| 2 | Interactive device cards + room views |
+| 3 | Auth UI + global state + API service layer (mocked) |
+| 4 | Automation rules UI + analytics charts (mocked) |
+| 5 | Spring Boot setup + DB schema + real CRUD APIs |
+| 6 | Auth & security (JWT, roles) |
+| 7 | WebSocket real-time layer + device simulation engine |
+| 8 | Automation rules engine (backend logic) |
+| 9 | Analytics backend + notifications |
+| 10 | Testing, Docker, deployment, documentation |
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/saksham172121/HomeAutomation.git
-   cd HomeAutomation
-   ```
+---
 
-2. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   > Note: `app.py` also requires `mysql-connector-python` and `apscheduler`, which aren't currently listed in `requirements.txt` — install them as well if you hit import errors:
-   > ```bash
-   > pip install mysql-connector-python apscheduler
-   > ```
+## 🚀 Getting Started
 
-3. Set up the MySQL database and update the `DB_CONFIG` dictionary at the top of `app.py` with your host, user, password, and database name.
+> Setup instructions will be filled in as each part is built.
 
-4. Create the required tables (users, devices, rooms, automation_rules, action_values, sensor_logs, login_logs, favorites) to match the queries in `app.py`.
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-5. Run the server:
-   ```bash
-   python app.py
-   ```
-   For production, use Gunicorn:
-   ```bash
-   gunicorn app:app
-   ```
+### Backend
+```bash
+cd backend
+./mvnw spring-boot:run
+```
 
-6. Open the frontend by serving/opening `login/login.html` in a browser, then navigate through to the main dashboard.
+### Full stack (Docker)
+```bash
+docker-compose up --build
+```
 
-## API Overview
+---
 
-| Endpoint | Method | Description |
-|---|---|---|
-| `/register` | POST | Register a new user |
-| `/login` | POST | Authenticate a user |
-| `/user/latest` | GET | Get the most recently registered/active user |
-| `/sensor-data` | GET | Get the latest temperature/humidity reading |
-| `/sensor-history` | GET | Get the last 50 sensor readings |
-| `/device/<id>` | POST | Turn a device on/off |
-| `/ac` | POST | Control AC power, mode, fan, and temperature |
-| `/rules` | GET, POST | List or create automation rules |
-| `/rules/<id>` | DELETE | Delete an automation rule |
-| `/favorites` | GET | List favorite rules |
-| `/favorites/<id>` | POST, DELETE | Add or remove a favorite rule |
-| `/favorites/descriptions` | GET | Get descriptions for favorite rules |
-| `/rooms` | GET, POST | List or create rooms |
-| `/rooms/<id>` | PUT, DELETE | Update or delete a room |
-| `/rooms/<id>/devices` | GET, POST | List or add devices in a room |
-| `/rooms/get_devices` | GET | Get devices across rooms |
-| `/devices/<id>` | PUT, DELETE | Update or delete a device |
+## 📌 Status
 
-## Security Notes
+🚧 **Week 1 in progress** — building the static frontend UI shell.
 
-This project is a personal/hobby automation service and currently has some rough edges worth knowing about before deploying it beyond a local network:
+---
 
-- Passwords are stored and compared in plain text — hashing (e.g. with `bcrypt`) is strongly recommended before any real-world use.
-- `DB_CONFIG` credentials are hardcoded in `app.py` — move these to environment variables before deploying.
-- CORS is currently wide open (`*`) — restrict this to trusted origins in production.
+## 📄 License
 
-## License
-
-No license file is currently included in this repository. Add one (e.g. MIT) if you intend for others to use or contribute to this project.
+MIT
