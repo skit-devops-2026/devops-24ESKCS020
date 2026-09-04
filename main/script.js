@@ -1,4 +1,9 @@
+// 🚧 DEV MODE: set to false once the backend/login is ready to re-enable the auth check
+const DEV_MODE_SKIP_LOGIN = true;
+
 document.addEventListener("DOMContentLoaded", function () {
+    if (DEV_MODE_SKIP_LOGIN) return; // Skip the login check entirely while developing the frontend
+
     const token = localStorage.getItem("authToken");
 
     if (!token) {
