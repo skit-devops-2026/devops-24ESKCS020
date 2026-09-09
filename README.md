@@ -126,3 +126,6 @@ User ──< Home ──< Room ──< Device ──< DeviceLog
 ## 📄 License
 
 MIT
+
+## Frontend Update
+Improved the SmartHome dashboard frontend.
