@@ -129,3 +129,5 @@ MIT
 
 ## Frontend Update
 Improved the SmartHome dashboard frontend.
+## Backend Update
+Documented the SmartHome backend service and API layer.
