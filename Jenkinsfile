@@ -1,20 +1,41 @@
 pipeline {
     agent any
 
+    tools {
+        // You may need to configure these tools in Jenkins Global Tool Configuration
+        // maven 'Maven 3'
+        // nodejs 'NodeJS 20'
+    }
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building..'
+                checkout scm
             }
         }
-        stage('Test') {
+        
+        stage('Build Backend') {
             steps {
-                echo 'Testing..'
+                dir('backend') {
+                    sh 'mvn clean install -DskipTests'
+                }
             }
         }
-        stage('Deploy') {
+        
+        stage('Test Backend') {
             steps {
-                echo 'Deploying....'
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+        }
+        
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
     }
