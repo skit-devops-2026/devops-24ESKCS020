@@ -131,3 +131,5 @@ MIT
 Improved the SmartHome dashboard frontend.
 ## Backend Update
 Documented the SmartHome backend service and API layer.
+
+## Jenkins Pipeline
