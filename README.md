@@ -88,7 +88,7 @@ smart-home/
 │       ├── mock/               # data.ts — rich mock dataset
 │       ├── types/              # Shared TypeScript interfaces
 │       └── lib/                # utils.ts, time.ts
-├── backend/                    # Spring Boot app (placeholder, Week 5)
+├── backend/                    # Spring Boot app (Week 5)
 │   ├── pom.xml
 │   └── src/main/java/io/smarthome/
 │       ├── controller/
