@@ -134,4 +134,12 @@ Documented the SmartHome backend service and API layer.
 
 ## Jenkins Pipeline
 <!-- PR 1 dummy change -->
+feature/pr-2
 <!-- PR 2 NEW dummy change -->
+
+
+<!-- PR 3 NEW dummy change -->
+
+<!-- PR 4 NEW dummy change -->
+
+
