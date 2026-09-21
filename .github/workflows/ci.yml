@@ -27,7 +27,7 @@ jobs:
 
       - name: Build and test backend
         working-directory: backend
-        run: mvn clean test -DskipTests=false
+        run: mvn test
 
   frontend:
     name: Frontend Build
@@ -47,6 +47,10 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Test frontend
+        working-directory: frontend
+        run: npm test
 
       - name: Build frontend
         working-directory: frontend
