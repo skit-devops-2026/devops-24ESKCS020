@@ -1,56 +1,21 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: smarthome-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB:       smarthome
-      POSTGRES_USER:     smarthome
-      POSTGRES_PASSWORD: smarthome_secret
+  app:
+    build: .
     ports:
-      - "5432:5432"
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - MONGO_URL=mongodb://db:27017/todos
+
+  db:
+    image: mongo:6
+    ports:
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U smarthome"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile           # to be created in Week 5
-    container_name: smarthome-backend
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/smarthome
-      SPRING_DATASOURCE_USERNAME: smarthome
-      SPRING_DATASOURCE_PASSWORD: smarthome_secret
-      JWT_SECRET:                 changeme_replace_with_256bit_secret_in_prod
-      FRONTEND_ORIGIN:            http://localhost:5173
-    ports:
-      - "8080:8080"
-    # backend service is not yet runnable 
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile           # to be created in Week 10
-    container_name: smarthome-frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    environment:
-      VITE_API_BASE_URL: http://localhost:8080
-    ports:
-      - "5173:80"
-    # frontend service is not yet runnable 
+      - mongo-data:/data/db
 
 volumes:
-  postgres_data:
+  mongo-data:
