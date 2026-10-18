@@ -1,149 +1,46 @@
-# SmartHome — Home Automation Dashboard
+# devops-24ESKCS020 — To-Do Application
 
-A full-stack home automation system for managing smart devices (lights, fans, thermostats, locks, plugs) across multiple rooms, with automation rules, usage analytics, and real-time WebSocket updates.
+## Author
 
----
+| Roll No. | Name | GitHub username |
+|---|---|---|
+| 24ESKCS020 | Aditya Mangal | adityamangal123 |
 
-## 📌 Status
+## About
 
-| Week | Focus | Status |
-|------|-------|--------|
-| 1 | Static frontend UI shell (mock data) | ✅ Complete |
-| 2 | Interactive device cards + room views | 🔜 |
-| 3 | Auth UI + global state + API service layer (mocked) | 🔜 |
-| 4 | Automation rules UI + analytics charts (mocked) | 🔜 |
-| 5 | Spring Boot setup + DB schema + real CRUD APIs | 🔜 |
-| 6 | Auth & security (JWT, roles) | 🔜 |
-| 7 | WebSocket real-time layer + device simulation engine | 🔜 |
-| 8 | Automation rules engine (backend logic) | 🔜 |
-| 9 | Analytics backend + notifications | 🔜 |
-| 10 | Testing, Docker, deployment, documentation | 🔜 |
+A full-stack containerized To-Do List application built with Node.js/Express and MongoDB, automated with GitHub Actions CI, monitored with Prometheus & Grafana, and deployed on Kubernetes.
 
----
+## Tech stack
 
-## 🧱 Tech Stack
+- Frontend: HTML5, CSS3, Modern JavaScript
+- Backend: Node.js / Express
+- Database: MongoDB
+- Monitoring: Prometheus & Grafana
+- Containerization: Docker & Docker Compose
+- Orchestration: Kubernetes
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS v3, Recharts, STOMP.js / SockJS |
-| Backend | Java 21, Spring Boot 3.3, Spring Security (JWT), Spring WebSocket |
-| Database | PostgreSQL 16 |
-| Scheduling | Spring `@Scheduled` |
-| Deployment | Docker Compose, Vercel (frontend), Render/Railway (backend) |
+## Running locally
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 20+
-- Java 21+
-- Docker (optional, for full-stack)
-
-### Frontend (Week 1 — fully functional with mock data)
 ```bash
-cd frontend
-npm install
-npm run dev
-# → http://localhost:5173
+docker compose up -d
 ```
 
-**Demo accounts (no signup needed):**
-- Click **"Login as Admin"** — full access
-- Click **"Login as User"** — standard access
+## Live URL
 
-### Backend (Week 5+)
-```bash
-cd backend
-./mvnw spring-boot:run
-```
+https://adityamangal123.github.io/todo-ci-practice/
 
-### PostgreSQL only (Docker)
-```bash
-docker-compose up postgres
-```
+## Health endpoint
 
-### Full stack (Week 10+)
-```bash
-docker-compose up --build
-```
+`GET /health` returns `{"status":"ok"}`.
+- Live endpoint: https://adityamangal123.github.io/todo-ci-practice/health/
+- Local endpoint: http://localhost:5000/health
+
+## Metrics endpoint
+
+`GET /metrics` returns Prometheus metrics.
+- Local endpoint: http://localhost:5000/metrics
 
 ---
-
-## 🗂️ Project Structure
-
-```
-smart-home/
-├── frontend/                   # React + TypeScript app (Vite)
-│   └── src/
-│       ├── components/
-│       │   ├── devices/        # DeviceCard, DeviceIcon
-│       │   ├── rooms/          # RoomCard
-│       │   ├── automation/     # RuleCard
-│       │   ├── notifications/  # NotificationItem
-│       │   ├── layout/         # Sidebar, TopBar, AppLayout
-│       │   └── ui/             # Button, Card, Toggle, Badge, Modal
-│       ├── pages/              # Dashboard, Rooms, RoomDetail, Automation, Analytics, Notifications, Settings, Login
-│       ├── context/            # AuthContext, DeviceContext
-│       ├── mock/               # data.ts — rich mock dataset
-│       ├── types/              # Shared TypeScript interfaces
-│       └── lib/                # utils.ts, time.ts
-├── backend/                    # Spring Boot app (Week 5)
-│   ├── pom.xml
-│   └── src/main/java/io/smarthome/
-│       ├── controller/
-│       ├── service/
-│       ├── repository/
-│       ├── model/
-│       ├── security/
-│       ├── websocket/
-│       └── dto/
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## 🗺️ Data Model
-
-```
-User ──< Home ──< Room ──< Device ──< DeviceLog
-                              │
-                              └──< AutomationRule
-```
-
-| Entity | Key Fields |
-|--------|-----------|
-| User | id, name, email, password, role (ADMIN/USER) |
-| Home | id, name, owner |
-| Room | id, name, home, icon |
-| Device | id, name, type (LIGHT/FAN/THERMOSTAT/LOCK/PLUG), state (JSON), room |
-| DeviceLog | id, device, previousState, newState, triggeredBy, timestamp |
-| AutomationRule | id, condition, action, enabled, lastTriggered |
-
----
-
-## 📄 License
-
-MIT
-
-## Frontend Update
-Improved the SmartHome dashboard frontend.
-## Backend Update
-Documented the SmartHome backend service and API layer.
-
-## Jenkins Pipeline
-<!-- PR 1 dummy change -->
-feature/pr-2
-<!-- PR 2 NEW dummy change -->
-
-
-<!-- PR 3 NEW dummy change -->
-
-<!-- PR 4 NEW dummy change -->
-
-
-
 
 # MT2 — Containerization, Deployment, Monitoring & Kubernetes
 
@@ -152,7 +49,7 @@ This project uses Docker for containerization. The `Dockerfile` at the root crea
 
 ## 2. Docker Build Command
 ```bash
-docker build -t devops-24eskcs024 .
+docker build -t devops-24eskcs020 .
 ```
 
 ## 3. Docker Compose
@@ -168,11 +65,9 @@ Image pushed to GHCR automatically by CI workflows:
 ## 5. Live Deployment URL
 Live URL: https://adityamangal123.github.io/todo-ci-practice/
 
-## Live URL
-https://adityamangal123.github.io/todo-ci-practice/
-
 ## 6. /health endpoint
-The application exposes a health check endpoint at `GET /health` which returns `{"status":"ok"}`. Live at: https://adityamangal123.github.io/todo-ci-practice/health
+The application exposes a health check endpoint at `GET /health` which returns `{"status":"ok"}`.
+Live: https://adityamangal123.github.io/todo-ci-practice/health/
 
 ## 7. /metrics endpoint
 The application exposes Prometheus-compatible metrics at `GET /metrics`.
