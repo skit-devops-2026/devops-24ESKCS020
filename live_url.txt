@@ -1,1 +1,1 @@
-https://todo-practice-app.herokuapp.com
+https://adityamangal123.github.io/todo-ci-practice/

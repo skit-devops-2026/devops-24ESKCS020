@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List | Docker & MongoDB</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 16px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 540px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        p.subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        button.btn-add {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.btn-add:hover {
+            background: var(--primary-hover);
+        }
+
+        ul.todo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        li.todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+
+        li.todo-item:hover {
+            border-color: #475569;
+        }
+
+        .todo-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .todo-text {
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        button.btn-delete {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button.btn-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>To-Do List App</h1>
+            <p class="subtitle">Dockerized Node.js + Express + MongoDB</p>
+        </header>
+
+        <div class="input-group">
+            <input type="text" id="new-todo-input" placeholder="What needs to be done?" autocomplete="off">
+            <button class="btn-add" id="btn-add">Add</button>
+        </div>
+
+        <ul class="todo-list" id="todo-list">
+            <!-- Dynamic items -->
+        </ul>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            No tasks yet. Add one above!
+        </div>
+    </div>
+
+    <script>
+        const todoList = document.getElementById('todo-list');
+        const emptyState = document.getElementById('empty-state');
+        const input = document.getElementById('new-todo-input');
+        const btnAdd = document.getElementById('btn-add');
+
+        async function fetchTodos() {
+            try {
+                const res = await fetch('/todos');
+                const data = await res.json();
+                renderTodos(data);
+            } catch (err) {
+                console.error('Failed to load todos:', err);
+            }
+        }
+
+        function renderTodos(todos) {
+            todoList.innerHTML = '';
+            if (!Array.isArray(todos) || todos.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+
+                const content = document.createElement('div');
+                content.className = 'todo-content';
+
+                const span = document.createElement('span');
+                span.className = 'todo-text';
+                span.textContent = todo.text;
+
+                content.appendChild(span);
+
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-delete';
+                btnDelete.textContent = 'Delete';
+                btnDelete.addEventListener('click', () => deleteTodo(todo._id || todo.id));
+
+                li.appendChild(content);
+                li.appendChild(btnDelete);
+                todoList.appendChild(li);
+            });
+        }
+
+        async function addTodo() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                const res = await fetch('/todos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                if (res.ok) {
+                    input.value = '';
+                    fetchTodos();
+                }
+            } catch (err) {
+                console.error('Failed to add todo:', err);
+            }
+        }
+
+        async function deleteTodo(id) {
+            try {
+                const res = await fetch(`/todos/${id}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    fetchTodos();
+                }
+            } catch (err) {
+                console.error('Failed to delete todo:', err);
+            }
+        }
+
+        btnAdd.addEventListener('click', addTodo);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addTodo();
+        });
+
+        fetchTodos();
+    </script>
+</body>
+</html>

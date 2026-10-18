@@ -162,13 +162,17 @@ docker compose up -d
 ```
 
 ## 4. Container Registry Image
-Image pushed to GHCR automatically by CI workflows.
+Image pushed to GHCR automatically by CI workflows:
+`ghcr.io/skit-devops-2026/devops-24eskcs020:latest`
 
 ## 5. Live Deployment URL
-Live URL: https://todo-practice-app.herokuapp.com
+Live URL: https://adityamangal123.github.io/todo-ci-practice/
+
+## Live URL
+https://adityamangal123.github.io/todo-ci-practice/
 
 ## 6. /health endpoint
-The application exposes a health check endpoint at `GET /health` which returns `{"status":"ok"}`.
+The application exposes a health check endpoint at `GET /health` which returns `{"status":"ok"}`. Live at: https://adityamangal123.github.io/todo-ci-practice/health
 
 ## 7. /metrics endpoint
 The application exposes Prometheus-compatible metrics at `GET /metrics`.
